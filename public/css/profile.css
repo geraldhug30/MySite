@@ -1,0 +1,12 @@
+.user-image {
+  border-radius: 100%;
+  width: 150px;
+  margin: 50px auto 10px;
+}
+.font-black {
+  color: black;
+}
+
+.m-top {
+  margin-top: 10%;
+}

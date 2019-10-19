@@ -1,0 +1,276 @@
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item ">
+          <a class="nav-link" href="/dashboard">Home </a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/profile">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/contact">contact</a>
+        </li>
+        <li class="nav-item">
+          <form action="/logout" method="POST">
+            <button class="btn btn-primary">Logout</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</div>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-4">
+      <div class="list-group center" id="list-tab" role="tablist">
+        <img src="<%= image %>" class="user-image" src="sample" />
+
+        <h2><%= user.fname %></h2>
+     
+        <a
+          class="list-group-item list-group-item-action active"
+          id="list-home-list"
+          data-toggle="list"
+          href="#list-home"
+          role="tab"
+          aria-controls="home"
+          >Profile</a
+        >
+        <a
+          class="list-group-item list-group-item-action"
+          id="list-profile-list"
+          data-toggle="list"
+          href="#list-profile"
+          role="tab"
+          aria-controls="profile"
+          >Update</a
+        >
+        <a
+          class="list-group-item list-group-item-action"
+          id="list-messages-list"
+          data-toggle="list"
+          href="#list-messages"
+          role="tab"
+          aria-controls="messages"
+          >
+          
+             
+          Password
+          </a
+        >
+        <a
+          class="list-group-item list-group-item-action"
+          id="list-settings-list"
+          data-toggle="list"
+          href="#list-settings"
+          role="tab"
+          aria-controls="settings"
+          >Settings</a
+        >
+      </div>
+    </div>
+   
+    <div class="col-8">
+      <div class="tab-content" id="nav-tabContent">
+        <div
+          class="tab-pane  fade show active"
+          id="list-home"
+          role="tabpanel"
+          aria-labelledby="list-home-list"
+        >
+        <!-- profile -->
+        <div class="container m-top">
+            <% if(error){ %>
+              <% error.forEach(item => { %>
+                <p class="bg-warning"><%= item.msgPassword %></p>
+                <p class="bg-warning"><%= item.msg %></p>
+                <% }) %>
+                <% } %>
+          <div class="list-group">
+            <button
+              type="button"
+              class="list-group-item list-group-item-action active"
+            >
+              Name: <%= user.fname %>
+            </button>
+            <button
+              type="button"
+              class="list-group-item list-group-item-action"
+            >
+              User Name: <%= user.uname %>
+            </button>
+            <button
+              type="button"
+              class="list-group-item list-group-item-action"
+            >
+              Email: <%= user.email %>
+            </button>
+
+            <button
+              type="button"
+              class="list-group-item list-group-item-action"
+            >
+              Last Update: <%= user.updatedAt %>
+            </button>
+          </div>
+        </div>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="list-profile"
+          role="tabpanel"
+          aria-labelledby="list-profile-list"
+        >
+          <!-- profile -->
+        
+          <article class="card-body mx-auto" style="max-width: 400px;">
+            
+            <h4 class="card-title mt-3 text-center">Update your Account</h4>
+            <% if(error){ %>
+              <% error.forEach(item => { %>
+                <p class="bg-warning"><%= item.msg %></p>
+          
+                <% }) %>
+                <% } %>
+            <form action="/update" method="POST" enctype="multipart/form-data">
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-user"></i>
+                  </span>
+                </div>
+                <input
+                  name="fname"
+                  class="form-control"
+                  placeholder="Full name"
+                  type="text"
+                />
+              </div>
+              <!-- form-group// -->
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-envelope"></i>
+                  </span>
+                </div>
+                <input
+                  name="uname"
+                  class="form-control"
+                  placeholder="Username"
+                  type="text"
+                  autocomplete="off"
+                />
+              </div>
+              <!-- form-group// -->
+
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-envelope"></i>
+                  </span>
+                </div>
+                <input
+                  name="email"
+                  class="form-control"
+                  placeholder="Email address"
+                  type="email"
+                />
+              </div>
+              <!-- form-group// -->
+              <div class="form-group input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <i class="fa fa-envelope"></i>
+                  </span>
+                </div>
+                <input type="file" name="uploadF" />
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">
+                  Update Account
+                </button>
+              </div>
+              <!-- form-group// -->
+            </form>
+          </article>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="list-messages"
+          role="tabpanel"
+          aria-labelledby="list-messages-list"
+        >
+         <!-- Password change -->
+         <article class="card-body mx-auto" style="max-width: 400px;">
+            <h4 class="card-title mt-3 text-center">Update your Password</h4>
+            
+         <form action="/update" method="POST">
+          <% if(error){ %>
+            <% error.forEach(item => { %>
+              <p class="bg-warning"><%= item.msgPassword %></p>
+              <% }) %>
+              <% } %>
+          <div class="form-group input-group">
+            <input
+                id="currentPassword"
+                  name="currentPassword"
+                  class="form-control"
+                  placeholder="Current Password"
+                  type="text"
+                />  
+          </div>
+          <p>Must atleast 6 character with special character</p>
+          <div class="form-group input-group">
+              <input
+                  id="newPassword"
+                    name="newPassword"
+                    class="form-control"
+                    placeholder="New Password"
+                    type="text"
+                  />  
+            </div>
+            <div class="form-group input-group">
+                <input
+                    id="confirmPassword"
+                      name="confirmPassword"
+                      class="form-control"
+                      placeholder="Confirm Password"
+                      type="text"
+                    />  
+              </div>
+              <button class="btn btn-dark">Submit</button>
+            </form>
+</article>
+          </div>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="list-settings"
+          role="tabpanel"
+          aria-labelledby="list-settings-list"
+        >
+          ...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <form action="/avatar" method="POST" enctype="multipart/form-data">
+    <input type="file" name="uploadF" />
+    <button>Upload</button>
+  </form> -->
