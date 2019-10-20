@@ -1,0 +1,35 @@
+div div p.post {
+  margin-left: 20px;
+}
+.post-user {
+  width: 80%;
+  margin: 10px auto;
+  padding: 5px;
+  background-color: #f6f6f6;
+  border-radius: 5%;
+}
+
+.image-name-dashboard {
+  margin: 10px;
+}
+.h3-dashboard {
+  display: inline-block;
+}
+.user-image-dashboard {
+  display: inline-block;
+  width: 80px;
+  border-radius: 100%;
+  margin: 10px;
+}
+
+div.image-upload {
+  text-align: right;
+}
+.image-upload > input {
+  display: none;
+}
+
+.image-upload img {
+  width: 80px;
+  cursor: pointer;
+}

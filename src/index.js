@@ -6,9 +6,15 @@ const bodyParser = require('body-parser');
 const ejsLayouts = require('express-ejs-layouts');
 const session = require('express-session');
 var cookieParser = require('cookie-parser');
-
+var path = require('path');
+const { body } = require('express-validator');
+const { sanitizeBody } = require('express-validator');
+// upload file usesing multer
+const multer = require('multer');
+const sharp = require('sharp');
 //file routing
 const Users = require('./models/users');
+const Post = require('./models/post');
 const auth = require('./middleware/auth');
 const app = express();
 require('dotenv').config();
@@ -43,43 +49,145 @@ app.get('/register', (req, res) => {
   res.render('register', { error });
 });
 
-app.post('/register', async (req, res) => {
-  const { fname, uname, email, password, cpassword } = req.body;
-  error = [];
-  try {
-    if (!fname || !uname || !email || !password || !cpassword) {
-      error.push({ msg: 'all fields are required' });
-      return res.redirect('/register');
-    }
-    if (password !== cpassword) {
-      error.push({ msg: 'password do not match' });
-      return res.redirect('/register');
-    }
+app.post(
+  '/register',
+  [
+    body('email')
+      .isEmail()
+      .withMessage('must have email')
+      .normalizeEmail(),
+    body('fname')
+      .isLength({ min: 3 })
+      .not()
+      .isEmpty()
+      .trim()
+      .escape(),
+    sanitizeBody('notifyOnReply').toBoolean(),
+    body('uname')
+      .isLength({ min: 3 })
+      .not()
+      .isEmpty()
+      .trim()
+      .escape(),
+    sanitizeBody('notifyOnReply').toBoolean()
+  ],
+  async (req, res) => {
+    const { fname, uname, email, password, cpassword } = req.body;
+    error = [];
+    try {
+      if (!fname || !uname || !email || !password || !cpassword) {
+        error.push({ msg: 'all fields are required' });
+        return res.redirect('/register');
+      }
+      if (password !== cpassword) {
+        error.push({ msg: 'password do not match' });
+        return res.redirect('/register');
+      }
 
-    // pass verification
-    const user = new Users({
-      fname,
-      uname,
-      email,
-      password
-    });
-    await user.save();
-    const token = await user.generateAuthToken();
-    res.redirect('/');
-  } catch (err) {
-    error.push(err);
+      // pass verification
+      const user = new Users({
+        fname,
+        uname,
+        email,
+        password
+      });
+      await user.save();
+      const token = await user.generateAuthToken();
+      res.redirect('/');
+    } catch (err) {
+      error.push(err);
 
-    return res.render('register', { error });
+      return res.render('register', { error });
+    }
   }
-});
+);
 
-app.get('/dashboard', auth, (req, res) => {
+app.get('/dashboard', auth, async (req, res) => {
   try {
-    res.render('dashboard', { user: req.user });
+    // sorted descending
+    const post = await Post.find({ owner: req.user._id }).sort({
+      createdAt: 'desc'
+    });
+    // console.log(post);
+    // adding newPost in post
+
+    const image =
+      'data:image/png;base64,' + req.user.saveFile.toString('base64');
+
+    res.render('dashboard', { user: req.user, post, image });
   } catch (err) {
+    console.log(err);
     res.send({ error: 'error' });
   }
 });
+
+// SET STORAGE
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'public/uploads');
+  },
+  limits: {
+    fileSize: 5000000
+  },
+  filename: function(req, file, cb) {
+    //path.extname(file.originalname)
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+var uploadFile = multer({ storage: storage });
+// const uploadFile = multer({
+//   dest: 'uploads',
+//   limits: {
+//     fileSize: 5000000
+//   },
+//   filename: function(req, file, cb) {
+//     cb(undefined, file.originalname);
+//   }
+// });
+
+app.get('/uploads/:id', (req, res) => {
+  const getFile = req.params.id;
+  res.sendFile(`uploads/${getFile}`);
+});
+
+app.post(
+  '/postMessage',
+  auth,
+  uploadFile.single('myFile'),
+  [
+    body('UserPost')
+      .isLength({ min: 3 })
+      .not()
+      .isEmpty()
+      .trim()
+      .escape(),
+    sanitizeBody('notifyOnReply').toBoolean()
+  ],
+  async (req, res) => {
+    const file = req.file;
+
+    const post = new Post({
+      ...req.body,
+      owner: req.user._id
+    });
+    try {
+      if (file) {
+        post.path = file.path;
+        post.fileName = file.filename;
+        post.mimetype = file.mimetype;
+        // post.file = file.buffer;
+        //req.user.saveFile = buffer;
+      }
+      await post.save(err => {
+        if (err) console.log(err);
+        console.log('saved');
+      });
+      res.redirect('/dashboard');
+    } catch (err) {
+      res.status(500).send(err);
+    }
+  }
+);
 
 app.get('/profile', auth, async (req, res) => {
   try {
@@ -131,9 +239,6 @@ app.post('/logout', auth, async (req, res) => {
   }
 });
 
-// upload file usesing multer
-const multer = require('multer');
-const sharp = require('sharp');
 // multer config file, desitination and validate
 const upload = multer({
   limits: {
@@ -151,19 +256,45 @@ const upload = multer({
 // endpoint
 app.post(
   '/update',
+  [
+    body('email')
+      .isEmail()
+      .normalizeEmail(),
+    body('fname')
+      .isLength({ min: 3 })
+      .not()
+      .isEmpty()
+      .trim()
+      .escape(),
+    sanitizeBody('notifyOnReply').toBoolean(),
+    body('uname')
+      .isLength({ min: 3 })
+      .not()
+      .isEmpty()
+      .trim()
+      .escape(),
+    sanitizeBody('notifyOnReply').toBoolean()
+  ],
   upload.single('uploadF'),
   auth,
   async (req, res) => {
     const updates = Object.keys(req.body);
-    const allowedUpdates = ['fname', 'uname', 'email', 'confirmPassword'];
+    const allowedUpdates = [
+      'fname',
+      'uname',
+      'email',
+      'confirmPassword',
+      'newPassword',
+      'currentPassword'
+    ];
     const isValidUpdates = updates.every(update =>
       allowedUpdates.includes(update)
     );
     if (!isValidUpdates) {
-      error.push({ msgPassword: 'error password updates' });
+      error.push({ msg: 'error updates' });
       return res.redirect('/profile');
     }
-    console.log(updates);
+
     try {
       const user = await Users.findOne(req.user);
       updates.forEach(update => {
@@ -180,14 +311,17 @@ app.post(
         req.user.saveFile = buffer;
       }
 
-      await req.user.save(err => {
-        if (err) console.log(err);
+      const save = await req.user.save(err => {
+        if (err) {
+          return new Error('Unavailable');
+        }
         console.log('saved');
       });
 
       res.redirect('/dashboard');
     } catch (err) {
       console.log(err);
+      res.send({ error: 'temporary unavailable' });
     }
   },
   (error, req, res, next) => {

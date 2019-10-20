@@ -1,4 +1,51 @@
 <%- include('header'); %>
 
-  <h2><i class="fa fa-camera-retro"></i> Welcome <%= user.fname %></h2>
+<div class="container">
+  <form action="/postMessage" enctype="multipart/form-data" method="POST">
+    <div class="form-group">
+      <label for="exampleFormControlTextarea1">Message:</label>
+      <textarea
+        class="form-control"
+        id="exampleFormControlTextarea1"
+        name="UserPost"
+        placeholder="Post a message?"
+        rows="3"
+      ></textarea>
+    </div>
+    <!-- file upload -->
+    <!-- <div class="image-upload">
+      <label for="file-input">
+        <i class="fas fa-link fa-2x"></i>
+      </label>
+      <input id="file-input" type="file" name="myFile" />
+    </div>
+
+
+    -->
+        <div class="form-group">
+          <label for="exampleFormControlFile1">Input file</label>
+          <input type="file" name="myFile" class="form-control-file" id="exampleFormControlFile1">
+        </div>
+      
+    <button type="submit" class="btn btn-dark">Submit</button>
+  </form>
+</div> 
+    
+    <!-- post -->
+    <% if(post){ %> <% post.forEach( value => { %>
+
+    <div class="container post-user">
+      <div class="post-user">
+        <div class="image-name-dashboard">
+          <img src="<%= image %>" class="user-image-dashboard" src="sample" />
+          <h3 class="h3-dashboard"><%= user.fname %></h3>
+        </div>
+
+        <p class="post"><%= value.UserPost %></p>
+        <a href="uploads/<%= value.fileName %>" download><%= value.fileName %></a>
+      </div>
+    </div>
+
+    <% }) %> <% }%>
+  </form>
 </div>

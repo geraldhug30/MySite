@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
+// const validator = require('validator');
 
-const taskSchema = mongoose.Schema(
+const postSchema = mongoose.Schema(
   {
-    post: {
+    UserPost: {
       type: String,
       require: true
     },
@@ -10,6 +11,18 @@ const taskSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'User'
+    },
+    fileName: {
+      type: String
+    },
+    mimetype: {
+      type: String
+    },
+    path: {
+      type: String
+    },
+    file: {
+      type: Buffer
     }
   },
   {
@@ -17,6 +30,6 @@ const taskSchema = mongoose.Schema(
   }
 );
 
-const Task = mongoose.model('Post', taskSchema);
+const Post = mongoose.model('Post', postSchema);
 
-module.exports = Task;
+module.exports = Post;
