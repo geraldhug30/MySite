@@ -1,7 +1,7 @@
 {
   "name": "chatApp2",
   "version": "1.0.0",
-  "description": "",
+  "description": "\"# MySite\"",
   "main": "index.js",
   "dependencies": {
     "bcrypt": "^3.0.6",
@@ -31,5 +31,13 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geraldhug30/MySite.git"
+  },
+  "bugs": {
+    "url": "https://github.com/geraldhug30/MySite/issues"
+  },
+  "homepage": "https://github.com/geraldhug30/MySite#readme"
 }
