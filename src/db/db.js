@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 mongoose.connect(
   // process.env.MONGOOSE_URI ||
-  process.env.MONGOOSE_URI_LOCAL,
+  process.env.MONGOOSE_URI,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
