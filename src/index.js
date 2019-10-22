@@ -21,6 +21,12 @@ require('dotenv').config();
 //connect database
 require('./db/db');
 
+// need todo
+// routing
+// improve validation
+// fixed profile input
+// contact page
+
 app.use(express.static('public'));
 app.disable('x-powered-by');
 app.set('view engine', 'ejs');
@@ -110,9 +116,12 @@ app.get('/dashboard', auth, async (req, res) => {
     });
     // console.log(post);
     // adding newPost in post
-
-    const image =
-      'data:image/png;base64,' + req.user.saveFile.toString('base64');
+    let image;
+    if (req.user.saveFile) {
+      image = 'data:image/png;base64,' + req.user.saveFile.toString('base64');
+    } else {
+      image = '';
+    }
 
     res.render('dashboard', { user: req.user, post, image });
   } catch (err) {
@@ -190,12 +199,14 @@ app.post(
 );
 
 app.get('/profile', auth, async (req, res) => {
+  // implementing buffer image to img src
+  let image;
+  if (req.user.saveFile) {
+    image = 'data:image/png;base64,' + req.user.saveFile.toString('base64');
+  } else {
+    image = '';
+  }
   try {
-    // implementing buffer image to img src
-
-    const image =
-      'data:image/png;base64,' + req.user.saveFile.toString('base64');
-
     res.render('profile', { user: req.user, image, error });
   } catch (err) {
     console.log(err);
@@ -311,7 +322,7 @@ app.post(
         req.user.saveFile = buffer;
       }
 
-      const save = await req.user.save(err => {
+      await req.user.save(err => {
         if (err) {
           return new Error('Unavailable');
         }
