@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "jsonwebtoken": "^8.5.1",
-    "validator": "^11.1.0"
+    "validator": "^13.7.0"
   },
   "scripts": {
     "start": "node src/index.js",
