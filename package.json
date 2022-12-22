@@ -21,7 +21,7 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "validator": "^11.1.0"
   },
   "scripts": {
